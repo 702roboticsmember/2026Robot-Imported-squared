@@ -1,0 +1,93 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.003294,
+        "y": 7.406577777777777
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.406494,
+        "y": 7.406577777777777
+      },
+      "isLocked": false,
+      "linkedName": "LeftStart"
+    },
+    {
+      "anchor": {
+        "x": 7.28666191155492,
+        "y": 6.952667617689015
+      },
+      "prevControl": {
+        "x": 6.673073340276841,
+        "y": 7.424012188947701
+      },
+      "nextControl": {
+        "x": 7.6242920596428005,
+        "y": 6.693307934598755
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.545435092724677,
+        "y": 4.571954350927247
+      },
+      "prevControl": {
+        "x": 7.6360057061340925,
+        "y": 5.387089871611984
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "DeadCollectLeft"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.2790883646541437,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0.8548580567772888,
+      "rotationDegrees": -71.52846492126803
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.121557454890787,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 1.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": -105.37625124882625
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}
