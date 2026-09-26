@@ -55,6 +55,7 @@ import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeArmSubsytem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LIntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Swerve;
@@ -84,6 +85,7 @@ public class RobotContainer {
     private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
    // private final LEDSubsystem l_LEDSubsystem = new LEDSubsystem();
     private final XboxController driver = new XboxController(0);
+    private final LIntakeSubsystem lIntakeSubsystem = new LIntakeSubsystem();
 
 
 
@@ -93,7 +95,7 @@ public class RobotContainer {
     private final JoystickButton armPartial = new JoystickButton(driver, Gamepad.Button.FACE_DOWN.value);
     private final JoystickButton intakeOut = new JoystickButton(driver, Gamepad.Button.FACE_LEFT.value);
     private final JoystickButton intakeIn = new JoystickButton(driver, Gamepad.Button.LEFT_BUMPER.value);
-    private final JoystickButton armOut = new JoystickButton(driver, Gamepad.Button.FACE_UP.value);
+    private final JoystickButton resetGyro = new JoystickButton(driver, Gamepad.Button.FACE_UP.value);
     private final JoystickButton shoot = new JoystickButton(driver, Gamepad.Button.RIGHT_BUMPER.value);
     private final JoystickButton autoAimHUB = new JoystickButton(driver, Gamepad.Button.START.value);
     private final JoystickButton autoAimPASS = new JoystickButton(driver, Gamepad.Button.BACK.value);
@@ -416,6 +418,7 @@ public class RobotContainer {
         ()-> Math.clamp(-driver.getLeftX() * power, -max, max),
         ()-> Math.clamp(-driver.getRightX() * power, -max, max), 
         ()->false, ()-> getAlliance()));
+        lIntakeSubsystem.setDefaultCommand(lIntakeSubsystem.LIntkakeTest(() -> driver.getRightY()));
 
         // s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> Math.clamp(-driver.getLeftY(), -max, max), null, null, UP, ClimbTrigger));
 
@@ -483,7 +486,8 @@ public class RobotContainer {
         DOWN.onTrue(wrapLocationChange(()-> prevAllianceLocation()));
         RIGHT.onTrue(wrapLocationChange(()-> nextLocation()));
         LEFT.onTrue(wrapLocationChange(()-> prevLocation()));
-        armOut.onTrue(ArmOut());
+        // armOut.onTrue(ArmOut());
+        resetGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
         // COSTART.whileTrue((new TeleopSwerve(s_Swerve, 
         // ()-> -driver.getRawAxis(1) * power, 

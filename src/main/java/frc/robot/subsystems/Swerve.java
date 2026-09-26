@@ -133,14 +133,15 @@ public class Swerve extends SubsystemBase {
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+        translation = translation.rotateBy(getHeading().unaryMinus());
         ChassisVelocities chassisVelocities = new ChassisVelocities(
                         translation.getX(),
                         translation.getY(),
                         rotation);
         
-        if(true) {
-            chassisVelocities = chassisVelocities.toFieldRelative(getHeading());
-        }
+        // if(true) {
+        //     chassisVelocities = chassisVelocities.toFieldRelative(getHeading());
+        // }
         SwerveModuleVelocity[] SwerveModuleVelocitys = 
                 Constants.Swerve.KINEMATICS.toSwerveModuleVelocities(chassisVelocities);
                 
@@ -152,14 +153,15 @@ public class Swerve extends SubsystemBase {
     }
 
     public void driveAdjustedHeading(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, Rotation2d TurretOffset) {
+        translation = translation.rotateBy(getHeading().plus(TurretOffset).unaryMinus());
         ChassisVelocities chassisVelocities = new ChassisVelocities(
                         translation.getX(),
                         translation.getY(),
                         rotation);
         
-        if(true) {
-            chassisVelocities = chassisVelocities.toFieldRelative(getHeading().plus(TurretOffset));
-        }
+        // if(true) {
+        //     chassisVelocities = chassisVelocities.toFieldRelative(getHeading().plus(TurretOffset));
+        // }
         SwerveModuleVelocity[] SwerveModuleVelocitys = 
                 Constants.Swerve.KINEMATICS.toSwerveModuleVelocities(chassisVelocities);
                 

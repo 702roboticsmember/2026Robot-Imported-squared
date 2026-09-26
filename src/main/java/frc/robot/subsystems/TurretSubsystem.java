@@ -93,7 +93,6 @@ public class TurretSubsystem extends SubsystemBase {
 
   public void setSpeed(double speed) {
     Motor.setThrottle(-speed);
-    Telemetry.log("hiiiiiii", true);
     
     
   }

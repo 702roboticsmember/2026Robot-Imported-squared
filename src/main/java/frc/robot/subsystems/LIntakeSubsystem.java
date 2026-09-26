@@ -7,7 +7,13 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import java.util.function.DoubleSupplier;
+import java.util.stream.DoubleStream;
+
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.telemetry.Telemetry;
 
@@ -19,7 +25,8 @@ public class LIntakeSubsystem extends SubsystemBase {
   /** Creates a new LIntakeSubsystem. */
   public LIntakeSubsystem() {
     Rmotor.setControl(new Follower(Constants.LintakeConstants.lmotorID, MotorAlignmentValue.Opposed));
-
+    Lmotor.configNeutralMode(NeutralModeValue.Brake);
+    Rmotor.configNeutralMode(NeutralModeValue.Brake);
   }
 
   public void setSpeed(double speed) {
@@ -34,5 +41,16 @@ public class LIntakeSubsystem extends SubsystemBase {
   public void periodic() {
     Telemetry.log("Lintake Pos", getTicks());
     // This method will be called once per scheduler run
+  }
+
+  public Command LIntkakeTest(DoubleSupplier axis) {
+    return Commands.runEnd(
+      () -> {
+        setSpeed(axis.getAsDouble()*0.5);
+      },
+      () -> {
+        setSpeed(0);
+      },
+      this);
   }
 }
