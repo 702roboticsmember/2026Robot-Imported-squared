@@ -29,8 +29,8 @@ import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
-  private TalonFX FlywheelMotor1 = new TalonFX(Constants.ShooterConstants.shooterMotor1, Constants.CAN_BUS);
-  private TalonFX FlywheelMotor2 = new TalonFX(Constants.ShooterConstants.shooterMotor2, Constants.CAN_BUS);
+  private TalonFX FlywheelMotor1 = new TalonFX(Constants.ShooterConstants.shooterMotor1, Constants.TURRET_CAN);
+  private TalonFX FlywheelMotor2 = new TalonFX(Constants.ShooterConstants.shooterMotor2, Constants.TURRET_CAN);
 
   private MotionMagicVelocityVoltage velControl = new MotionMagicVelocityVoltage(0);
   //private TalonFX TurretMotor = new TalonFX(Constants.ShooterConstants.angleMotor);

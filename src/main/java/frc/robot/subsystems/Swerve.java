@@ -62,7 +62,6 @@ public class Swerve extends SubsystemBase {
         // try {
         //     config = RobotConfig.fromGUISettings();
         // } catch (IOException | ParseException e) {
-        //     // TODO Auto-generated catch block
         //     e.printStackTrace();
         // }
 
@@ -364,13 +363,12 @@ public void addmt1VisionMeasurement(PoseEstimate mt1){
         if(Double.isNaN(swervePoseEstimator.getEstimatedPosition().getX())){
             swervePoseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.KINEMATICS, getGyroYaw(), getModulePositions(), new Pose2d());
         }
-        //TODO make sure these are what they are meant to be
-        // var limelightMeasurement =  limelightSubsystem.getPoseEstimateMt1();
-        // var limelightMeasurementTurret =  limelightSubsystem.getPoseEstimateMt1();
+        var limelightMeasurement =  limelightSubsystem.getBackPose();
+        var limelightMeasurementTurret =  limelightSubsystem.getPoseEstimateMt1();
         //if(gyro.isConnected())swervePoseEstimator.updateWithTime(Timer.getTimestamp(), getGyroYaw(), getModulePositions());
         swervePoseEstimator.updateWithTime(Timer.getMonotonicTimestamp(), getGyroYaw(), getModulePositions());
        
-
+        Telemetry.log("Pose", swervePoseEstimator.getEstimatedPosition());
 
 
         Telemetry.log("gyro", getHeading().getDegrees() );
@@ -383,22 +381,22 @@ public void addmt1VisionMeasurement(PoseEstimate mt1){
             Telemetry.log("Mod " + mod.moduleNumber + " Velocity", mod.getState().velocity);
         }
 
-        // if (limelightMeasurementTurret != null){
-        //     if(limelightMeasurementTurret.pose != null && limelightMeasurementTurret.pose.getRotation() != null){
-        //       Pose2d pose = limelightTurretPoseAdjustedToRobot(limelightMeasurementTurret.pose);
+        if (limelightMeasurementTurret != null){
+            if(limelightMeasurementTurret.pose != null && limelightMeasurementTurret.pose.getRotation() != null){
+              Pose2d pose = limelightTurretPoseAdjustedToRobot(limelightMeasurementTurret.pose);
               
-        //       limelightMeasurementTurret.pose = pose;
-        //      addmt1VisionMeasurement(limelightMeasurementTurret); 
+              limelightMeasurementTurret.pose = pose;
+             addmt1VisionMeasurement(limelightMeasurementTurret); 
               
-        //     }
-        //    }
+            }
+           }
            ChassisVelocities speed = getRobotRelativeSpeeds();
            Constants.Swerve.speeds = speed;
         Telemetry.log("chassisx", speed.vx);
         Telemetry.log("chassisy", speed.vy);
-        // if (limelightMeasurement != null){   
-        //     addmt1VisionMeasurement(limelightMeasurement); 
-        // }
+        if (limelightMeasurement != null){   
+            addmt1VisionMeasurement(limelightMeasurement); 
+        }
     // Constants.Swerve.Robotpose = swervePoseEstimator.getEstimatedPosition();
     // Constants.TurretConstants.turretPose2d = RobotPoseAdjustedTolimelightTurret(swervePoseEstimator.getEstimatedPosition());
     

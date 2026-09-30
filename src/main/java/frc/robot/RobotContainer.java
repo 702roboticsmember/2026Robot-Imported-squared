@@ -137,10 +137,9 @@ public class RobotContainer {
     }
 
 
-    public static boolean getAlliance(){
-        // TODO find method for getting alliance
+    public static Alliance getAlliance(){
         BLUE_ALLIANCE = true;
-        return true;
+        return MatchState.getAlliance().get();
     }
 
 
@@ -288,7 +287,7 @@ public class RobotContainer {
 
     private Command AutoAim() {
         Telemetry.log("autorun", true);
-        return new AutoAimCommand(t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, false, ()-> getAlliance());
+        return new AutoAimCommand(t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, false, ()-> getAlliance() == Alliance.BLUE);
     }
 
     private Command Nest() {
@@ -303,7 +302,7 @@ public class RobotContainer {
 
     private Command AimAtHub(){
         
-            return new AutoAimCommand(true, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, ()-> getAlliance());
+            return new AutoAimCommand(true, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, ()-> getAlliance() == Alliance.BLUE);
         
         
             //return new AutoAimCommand(true, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem);
@@ -311,14 +310,14 @@ public class RobotContainer {
 
     private Command AimAtHubBlue(){
         
-            return new AutoAimCommand(Constants.Locations.BLUEHUB.location, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, ()-> getAlliance(), limelightSubsystem);
+            return new AutoAimCommand(Constants.Locations.BLUEHUB.location, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, ()-> getAlliance() == Alliance.BLUE, limelightSubsystem);
         
             //return new AutoAimCommand(true, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem);
     }
 
     private Command AimAtHubRed(){
             
-            return new AutoAimCommand(Constants.Locations.REDHUB.location, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, ()-> getAlliance(), limelightSubsystem);
+            return new AutoAimCommand(Constants.Locations.REDHUB.location, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, ()-> getAlliance() == Alliance.BLUE, limelightSubsystem);
         
             //return new AutoAimCommand(true, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem);
     }
@@ -330,7 +329,7 @@ public class RobotContainer {
 
     private Command PASS(){
       
-        return new AutoAimCommand(t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, true, ()-> getAlliance());
+        return new AutoAimCommand(t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, true, ()-> getAlliance() == Alliance.BLUE);
     }
 
     private Command ExtendClimb(){
@@ -399,7 +398,7 @@ public class RobotContainer {
         //     field.getObject("path").setPoses(poses);
         // });
 
-        t_TurretSubsystem.setDefaultCommand(new TurretRotateManualCommand(() -> driver.getRightX(), t_TurretSubsystem));
+        // t_TurretSubsystem.setDefaultCommand(new TurretRotateManualCommand(() -> driver.getRightX(), t_TurretSubsystem));
         c_ClimbSubsystem.setDefaultCommand(new InstantCommand(()-> c_ClimbSubsystem.setSpeed(driver.getLeftTrigger() - driver.getRightTrigger()), c_ClimbSubsystem));
         // l_LEDSubsystem.setDefaultCommand(
         // new InstantCommand(()->
@@ -412,12 +411,11 @@ public class RobotContainer {
         // }
         // , l_LEDSubsystem));
         
-        // TODO swerve
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, 
         ()-> Math.clamp(-driver.getLeftY() * power, -max, max) , 
         ()-> Math.clamp(-driver.getLeftX() * power, -max, max),
         ()-> Math.clamp(-driver.getRightX() * power, -max, max), 
-        ()->false, ()-> getAlliance()));
+        ()->false, ()-> getAlliance() == Alliance.BLUE));
         lIntakeSubsystem.setDefaultCommand(lIntakeSubsystem.LIntkakeTest(() -> driver.getRightY()));
 
         // s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> Math.clamp(-driver.getLeftY(), -max, max), null, null, UP, ClimbTrigger));
@@ -525,11 +523,11 @@ public class RobotContainer {
     }
 
     void nextAllianceLocation(){
-        RobotContainer.currentPOI = RobotContainer.currentPOI.AlianceNext(getAlliance());
+        RobotContainer.currentPOI = RobotContainer.currentPOI.AlianceNext(getAlliance() == Alliance.BLUE);
     }
 
     void prevAllianceLocation(){
-        RobotContainer.currentPOI = RobotContainer.currentPOI.AliancePrev(getAlliance());
+        RobotContainer.currentPOI = RobotContainer.currentPOI.AliancePrev(getAlliance() == Alliance.BLUE);
     }
 
 

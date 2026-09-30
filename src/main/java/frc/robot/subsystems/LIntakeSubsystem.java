@@ -24,32 +24,43 @@ public class LIntakeSubsystem extends SubsystemBase {
   TalonFX Rmotor = new TalonFX(Constants.LintakeConstants.rmotorID, Constants.CAN_BUS);
   /** Creates a new LIntakeSubsystem. */
   public LIntakeSubsystem() {
-    Rmotor.setControl(new Follower(Constants.LintakeConstants.lmotorID, MotorAlignmentValue.Opposed));
     Lmotor.configNeutralMode(NeutralModeValue.Brake);
     Rmotor.configNeutralMode(NeutralModeValue.Brake);
   }
 
-  public void setSpeed(double speed) {
+  public void setLSpeed(double speed) {
     Lmotor.setThrottle(speed);
   }
+  public void setRSpeed(double speed) {
+    Rmotor.setThrottle(speed);
+  }
 
-  public double getTicks() {
+  public double getLTicks() {
     return Lmotor.getPosition().getValueAsDouble();
+  }
+
+  public double getRTicks() {
+    return Rmotor.getPosition().getValueAsDouble();
   }
 
   @Override
   public void periodic() {
-    Telemetry.log("Lintake Pos", getTicks());
+    Telemetry.log("Lintake L Pos", getLTicks());
     // This method will be called once per scheduler run
+  }
+
+  public void setBoth(double speed) {
+    setLSpeed(speed);
+    setRSpeed(speed);
   }
 
   public Command LIntkakeTest(DoubleSupplier axis) {
     return Commands.runEnd(
       () -> {
-        setSpeed(axis.getAsDouble()*0.5);
+        setBoth(axis.getAsDouble()*0.5);
       },
       () -> {
-        setSpeed(0);
+        setBoth(0);
       },
       this);
   }

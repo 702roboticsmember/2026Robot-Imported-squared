@@ -17,7 +17,7 @@ import org.wpilib.telemetry.Telemetry;
 import frc.robot.Constants;
 
 public class HoodSubsystem extends SubsystemBase {
-  TalonFX HoodMotor = new TalonFX(Constants.HoodConstants.HoodMotor, Constants.CAN_BUS);
+  TalonFX HoodMotor = new TalonFX(Constants.HoodConstants.HoodMotor, Constants.TURRET_CAN);
   private MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
   /** Creates a new HoodSubsystem. */
  

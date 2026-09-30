@@ -15,7 +15,8 @@ import frc.robot.subsystems.LIntakeSubsystem;
 public class LintakePIDCommand extends Command {
   LIntakeSubsystem lIntakeSubsystem;
   boolean wiggle;
-  PIDController pidController = new PIDController(Constants.LintakeConstants.kP, Constants.LintakeConstants.kI, Constants.LintakeConstants.kD);
+  PIDController lPidController = new PIDController(Constants.LintakeConstants.kP, Constants.LintakeConstants.kI, Constants.LintakeConstants.kD);
+  PIDController rPidController = new PIDController(Constants.LintakeConstants.kP, Constants.LintakeConstants.kI, Constants.LintakeConstants.kD);
   double setpoint;
   Timer timer = new Timer();
   /** Creates a new LintakePIDCommand. */
@@ -34,7 +35,8 @@ public class LintakePIDCommand extends Command {
       timer.reset();
       timer.start();
     } else {
-      pidController.setSetpoint(setpoint);
+      lPidController.setSetpoint(setpoint);
+      rPidController.setSetpoint(setpoint);
     }
   }
 
@@ -42,12 +44,15 @@ public class LintakePIDCommand extends Command {
   @Override
   public void execute() {
     if(wiggle) {
-      pidController.setSetpoint(setpoint + (Math.sin(timer.get() * Constants.LintakeConstants.wigglePeriod) * Constants.LintakeConstants.wiggleAmplitude));
+      lPidController.setSetpoint(setpoint + (Math.sin(timer.get() * Constants.LintakeConstants.wigglePeriod) * Constants.LintakeConstants.wiggleAmplitude));
+      rPidController.setSetpoint(setpoint + (Math.sin(timer.get() * Constants.LintakeConstants.wigglePeriod) * Constants.LintakeConstants.wiggleAmplitude));
     }
 
-    double speed = pidController.calculate(lIntakeSubsystem.getTicks());
-    lIntakeSubsystem.setSpeed(speed);
-    Telemetry.log("Lintake Speed", speed);
+    double lspeed = lPidController.calculate(lIntakeSubsystem.getLTicks());
+    double rspeed = rPidController.calculate(lIntakeSubsystem.getRTicks());
+    lIntakeSubsystem.setLSpeed(lspeed);
+    lIntakeSubsystem.setRSpeed(rspeed);
+    Telemetry.log("Lintake Speed", lspeed);
   }
 
   // Called once the command ends or is interrupted.

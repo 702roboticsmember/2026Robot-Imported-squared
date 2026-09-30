@@ -14,6 +14,7 @@ import com.limelightvision.Limelight;
 
 import com.limelightvision.FiducialTarget;
 import com.limelightvision.IMUData;
+import com.limelightvision.IMUMode;
 import com.limelightvision.LimelightResults;
 import com.limelightvision.PoseEstimate;
 import com.limelightvision.PoseEstimateType;
@@ -25,9 +26,10 @@ import frc.robot.Constants;
 
 public class LimelightSubsystem extends SubsystemBase {
   Limelight limelight = new Limelight(Constants.limelightConstants.limelightTurret);
+  Limelight secondary = new Limelight(Constants.limelightConstants.limelightBack);
   /** Creates a new LimelightSubsystem. */
   public LimelightSubsystem() {
-
+    limelight.setIMUMode(IMUMode.INTERNAL_EXTERNAL_ASSIST);
   }
 
   public LimelightResults getResults() {
@@ -75,6 +77,12 @@ public class LimelightSubsystem extends SubsystemBase {
     Alliance alliance = MatchState.getAlliance().get();
     PoseEstimateType poseEstimateType = (alliance == Alliance.RED) ? PoseEstimateType.MT1_WPIRED : PoseEstimateType.MT1_WPIBLUE;
     return limelight.getPoseEstimate(poseEstimateType);
+  }
+
+  public PoseEstimate getBackPose() {
+    Alliance alliance = MatchState.getAlliance().get();
+    PoseEstimateType poseEstimateType = (alliance == Alliance.RED) ? PoseEstimateType.MT1_WPIRED : PoseEstimateType.MT1_WPIBLUE;
+    return secondary.getPoseEstimate(poseEstimateType);
   }
 
   public PoseEstimate getPoseEstimateMt2() {

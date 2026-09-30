@@ -51,9 +51,7 @@ public class Robot extends TimedRobot {
 
     // and put our
     // autonomous chooser on the dashboard.
-    //CameraServer.startAutomaticCapture();
-    // TODO limelight IMU
-    // Limelight.SetIMUMode(Constants.limelightConstants.limelightTurret, 4);
+    //CameraServer.startAutomaticCapture();    // Limelight.SetIMUMode(Constants.limelightConstants.limelightTurret, 4);
     // Limelight.IMUMode = IMUMode.
     System.out.println("Robot Container Initializing");
     robotContainer = new RobotContainer();

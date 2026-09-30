@@ -48,6 +48,7 @@ import java.util.function.BooleanSupplier;
 //for your information
 public final class Constants {
     public static final CANBus CAN_BUS = new CANBus(CANPort.CAN_S0);
+    public static final CANBus TURRET_CAN = new CANBus(CANPort.CAN_S1);
     public static final double CONTROLLER_DEADBAND = 0.05;//0.05
 
     public static final class LEDConstants {
