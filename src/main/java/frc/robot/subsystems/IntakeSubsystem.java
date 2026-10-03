@@ -24,16 +24,16 @@ public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     System.out.println("Intake Sub Init");
-    TalonFXConfigurator talonFXConfigurator = intakeMotor.getConfigurator();
-    TalonFXConfiguration config = new TalonFXConfiguration();
+    // TalonFXConfigurator talonFXConfigurator = intakeMotor.getConfigurator();
+    // TalonFXConfiguration config = new TalonFXConfiguration();
     
-    var CurrentLimits = config.CurrentLimits;
-    CurrentLimits.StatorCurrentLimit = Constants.IntakeConstants.STATOR_CURRENT_LIMIT2;
-    CurrentLimits.SupplyCurrentLimit = Constants.IntakeConstants.CURRENT_LIMIT2;
-    CurrentLimits.StatorCurrentLimitEnable = Constants.IntakeConstants.ENABLE_STATOR_CURRENT_LIMIT2;
-    CurrentLimits.SupplyCurrentLimitEnable = Constants.IntakeConstants.ENABLE_CURRENT_LIMIT2;
+    // var CurrentLimits = config.CurrentLimits;
+    // CurrentLimits.StatorCurrentLimit = Constants.IntakeConstants.STATOR_CURRENT_LIMIT2;
+    // CurrentLimits.SupplyCurrentLimit = Constants.IntakeConstants.CURRENT_LIMIT2;
+    // CurrentLimits.StatorCurrentLimitEnable = Constants.IntakeConstants.ENABLE_STATOR_CURRENT_LIMIT2;
+    // CurrentLimits.SupplyCurrentLimitEnable = Constants.IntakeConstants.ENABLE_CURRENT_LIMIT2;
 
-    talonFXConfigurator.apply(config);
+    // talonFXConfigurator.apply(config);
     
   }
 
@@ -43,7 +43,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
   public Command spin(DoubleSupplier speed) {
     return Commands.runEnd(
-      () -> { setIntakeSpeed(speed.getAsDouble()); },
+      () -> { setIntakeSpeed(speed.getAsDouble()); 
+        System.out.print("going");
+      },
       () -> { setIntakeSpeed(0); },
       this
     );

@@ -46,13 +46,13 @@ import frc.robot.Constants.Locations;
 import frc.robot.commands.AutoAimCommand;
 import frc.robot.commands.AutoIntakeCommand;
 import frc.robot.commands.FloorOffset;
+import frc.robot.commands.LintakePIDCommand;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.TurretRotateManualCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.FloorIndexerSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
-import frc.robot.subsystems.IntakeArmSubsytem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.LIntakeSubsystem;
@@ -78,7 +78,6 @@ public class RobotContainer {
     private final ShooterSubsystem s_ShooterSubsystem = new ShooterSubsystem();
     private final ClimbSubsystem c_ClimbSubsystem = new ClimbSubsystem();
     private final IndexerSubsystem i_IndexerSubsystem = new IndexerSubsystem();
-    private final IntakeArmSubsytem i_IntakeArmSubsystem = new IntakeArmSubsytem();
     private final FloorIndexerSubsystem f_FloorIndexerSubsystem = new FloorIndexerSubsystem();
     private final TurretSubsystem t_TurretSubsystem = new TurretSubsystem();
     private final HoodSubsystem h_HoodSubsystem = new HoodSubsystem();
@@ -91,15 +90,20 @@ public class RobotContainer {
 
 
     //Driver Buttons
-    private final JoystickButton armin = new JoystickButton(driver, Gamepad.Button.FACE_RIGHT.value);
-    private final JoystickButton armPartial = new JoystickButton(driver, Gamepad.Button.FACE_DOWN.value);
+    private final JoystickButton lintakein = new JoystickButton(driver, Gamepad.Button.FACE_RIGHT.value);
+    private final JoystickButton lintakePartial = new JoystickButton(driver, Gamepad.Button.FACE_DOWN.value);
+    private final JoystickButton lintakeWiggle = new JoystickButton(driver, Gamepad.Button.RIGHT_BUMPER.value);
     private final JoystickButton intakeOut = new JoystickButton(driver, Gamepad.Button.FACE_LEFT.value);
-    private final JoystickButton intakeIn = new JoystickButton(driver, Gamepad.Button.LEFT_BUMPER.value);
+    // private final JoystickButton intakeIn = new JoystickButton(driver, Gamepad.Button.LEFT_BUMPER.value);
+    private final Trigger intakeIn = new Trigger(() -> driver.getLeftTrigger() > 0.65);
     private final JoystickButton resetGyro = new JoystickButton(driver, Gamepad.Button.FACE_UP.value);
-    private final JoystickButton shoot = new JoystickButton(driver, Gamepad.Button.RIGHT_BUMPER.value);
+    private final Trigger shoot = new Trigger(() -> driver.getRightTrigger() > 0.65);
+    
+    // private final JoystickButton shoot = new JoystickButton(driver, Gamepad.Button.RIGHT_BUMPER.value);
     private final JoystickButton autoAimHUB = new JoystickButton(driver, Gamepad.Button.START.value);
     private final JoystickButton autoAimPASS = new JoystickButton(driver, Gamepad.Button.BACK.value);
-    
+    private final JoystickButton HubReset = new JoystickButton(driver, Gamepad.Button.LEFT_STICK.value);
+
     private final POVButton UP = new POVButton(driver, POVDirection.UP);
     private final POVButton DOWN = new POVButton(driver, POVDirection.DOWN);
     private final POVButton LEFT = new POVButton(driver, POVDirection.LEFT);
@@ -143,31 +147,16 @@ public class RobotContainer {
     }
 
 
-    private Command ArmOut(){
-        return Commands.run(()->i_IntakeArmSubsystem.goToAngle(100), i_IntakeArmSubsystem).withDeadline(new WaitCommand(0.3));
-    }
-
-    private Command ArmIn(){
-        return new ParallelCommandGroup(Commands.run(()->i_IntakeArmSubsystem.goToAngle(5), i_IntakeArmSubsystem).withDeadline(new WaitCommand(0.3)), 
-        HoodDown(), 
-        Commands.run(()-> t_TurretSubsystem.goToAngle(0), t_TurretSubsystem)).withDeadline(new WaitCommand(1));
-    }
-
-    private Command ArmPartial(){
-        return Commands.run(()->i_IntakeArmSubsystem.goToAngle(60), i_IntakeArmSubsystem).withDeadline(new WaitCommand(0.3));
-    }
     
-    
-    private Command IntakeIn() {
-        return new ParallelCommandGroup(
+    // private Command IntakeIn() {
+    //     return new ParallelCommandGroup(
             
-            new InstantCommand(() -> i_IntakeSubsystem.setIntakeSpeed(0.6), i_IntakeSubsystem)
-        ).withDeadline(new WaitCommand(0.3));
-    }
+    //         new InstantCommand(() -> i_IntakeSubsystem.setIntakeSpeed(0.6), i_IntakeSubsystem)
+    //     ).withDeadline(new WaitCommand(0.3));
+    // }
     private Command IntakeOut() {
         return new ParallelCommandGroup(
-            new InstantCommand(() -> f_FloorIndexerSubsystem.setFloorIndexSpeed(-0.3), f_FloorIndexerSubsystem),
-            new InstantCommand(() -> i_IntakeSubsystem.setIntakeSpeed(-0.5), i_IntakeArmSubsystem)
+            new InstantCommand(() -> f_FloorIndexerSubsystem.setFloorIndexSpeed(-0.3), f_FloorIndexerSubsystem)
         );
     }
     private Command IntakeStop() {
@@ -213,34 +202,28 @@ public class RobotContainer {
              new WaitCommand(0.1),
             new ParallelCommandGroup(
                 //TODO figure out what tf this does
-            //Commands.run(()->i_IntakeSubsystem.setIntakeSpeed(0.5), i_IntakeSubsystem),
-            // Commands.run(()->{
-            //     if (Math.abs(CurrentAngle - TurretGoal) < Constants.TurretConstants.allowedShootingTolerance) {
-            //             i_IndexerSubsystem.setVelocity(140);
-            //         }
-            //         else {
-            //             i_IndexerSubsystem.setVelocity(0);
-            //         }
-            //     if(i_IndexerSubsystem.getVelocity() < 5 || (f_FloorIndexerSubsystem.getVelocity() < 5 && f_FloorIndexerSubsystem.getVelocity() > 0) ){
+            Commands.run(()->i_IntakeSubsystem.setIntakeSpeed(0.5), i_IntakeSubsystem),
+            Commands.run(()->{
+                if (Math.abs(CurrentAngle - TurretGoal) < Constants.TurretConstants.allowedShootingTolerance) {
+                        i_IndexerSubsystem.setVelocity(140);
+                    }
+                    else {
+                        i_IndexerSubsystem.setVelocity(0);
+                    }
+                if(i_IndexerSubsystem.getVelocity() < 5 || (f_FloorIndexerSubsystem.getVelocity() < 5 && f_FloorIndexerSubsystem.getVelocity() > 0) ){
                     
-            //     }else{
-            //         jamTime = Timer.getMonotonicTimestamp();
-            //     }
-            //         if(Timer.getMonotonicTimestamp() - jamTime < 1 && !l_lidarSubsystem.jam() && Timer.getMonotonicTimestamp() - reset > 0.5){
-            //         if (Math.abs(CurrentAngle - TurretGoal) < Constants.TurretConstants.allowedShootingTolerance) {
-            //             f_FloorIndexerSubsystem.setVelocity(60);
-            //         } else {
-            //             f_FloorIndexerSubsystem.setFloorIndexSpeed(20);
-            //         }
-            //     }else{
-            //         Telemetry.log("fixed", true);
-            //         f_FloorIndexerSubsystem.setVelocity(-40);
-        
-            //     }
+                }
+
+                if (Math.abs(CurrentAngle - TurretGoal) < Constants.TurretConstants.allowedShootingTolerance) {
+                    f_FloorIndexerSubsystem.setVelocity(60);
+                } else {
+                    f_FloorIndexerSubsystem.setVelocity(20);
+                }
+                
                 
 
-            // },
-            // f_FloorIndexerSubsystem, i_IndexerSubsystem),
+            },
+            f_FloorIndexerSubsystem, i_IndexerSubsystem),
                 new InstantCommand(() -> max = 0.13)
                 ));
     }
@@ -459,22 +442,27 @@ public class RobotContainer {
         Telemetry.log("Team Chooser", teamChooser);
         Telemetry.log("Input Distance", 0);
     }
+    Command SetRobotPose(Pose2d pose) {
+        return new InstantCommand(() -> s_Swerve.setPosition(pose));
+    }
 
     private void configureButtonBindings() {
         /* Driver Buttons */
        
         intakeOut.whileTrue(IntakeOut()); 
         intakeOut.onFalse(IntakeStop()); 
-        intakeIn.whileTrue(IntakeIn());//new ParallelCommandGroup(new IntakeArmPID(0, i_IntakeArmSubsystem), new InstantCommand(() -> i_IntakeSubsystem.setIntakeSpeed(0))));  
-        intakeIn.onFalse(IntakeStop());
+        intakeIn.whileTrue(i_IntakeSubsystem.spin(() ->-0.6));//new ParallelCommandGroup(new IntakeArmPID(0, i_IntakeArmSubsystem), new InstantCommand(() -> i_IntakeSubsystem.setIntakeSpeed(0))));  
         autoAimHUB.whileTrue(AimAtHub());
         autoAimHUB.onFalse(HoodDown());
         autoAimPASS.whileTrue(PASS());
         autoAimPASS.onFalse(HoodDown());
+        HubReset.onTrue(SetRobotPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO)));
         // armin.onTrue(ArmIn());
         // armPartial.whileTrue(ArmPartial());
         // armPartial.onFalse(ArmOut());
-        
+        lintakein.whileTrue(new LintakePIDCommand(lIntakeSubsystem, false, 0));
+        lintakePartial.whileTrue(new LintakePIDCommand(lIntakeSubsystem, false, -7));
+        lintakeWiggle.whileTrue(new LintakePIDCommand(lIntakeSubsystem, true, -1));
       
         shoot.whileTrue(Shoot());
   

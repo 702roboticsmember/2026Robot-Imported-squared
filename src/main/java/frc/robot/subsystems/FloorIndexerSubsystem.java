@@ -9,13 +9,16 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.SubsystemBase;
+import org.wpilib.drivers.motor.Talon;
 import org.wpilib.telemetry.Telemetry;
 
 import frc.robot.Constants;
@@ -23,6 +26,7 @@ import frc.robot.Constants;
 public class FloorIndexerSubsystem extends SubsystemBase {
    private MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
   TalonFX FloorIndexMotor = new TalonFX(Constants.IndexerConstants.indexMotorFeeder, Constants.CAN_BUS);
+  TalonFX FloorFollower = new TalonFX(Constants.IndexerConstants.indexMotorFeeder2, Constants.CAN_BUS);
   private MotionMagicVelocityVoltage velControl = new MotionMagicVelocityVoltage(0);
 
   /** Creates a new FloorIndexerSubsystem. */
@@ -52,6 +56,9 @@ public class FloorIndexerSubsystem extends SubsystemBase {
 
     
     talonFXConfigurator.apply(config);
+    FloorFollower.getConfigurator().apply(config);
+
+    FloorFollower.setControl(new Follower(FloorIndexMotor.getDeviceID(), MotorAlignmentValue.Opposed));
 
   }
   public void setFloorIndexSpeed(double speed) {

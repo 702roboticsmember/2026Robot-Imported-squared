@@ -374,8 +374,8 @@ public final class Constants {
     
     //Intake Constants:
     public static final class IntakeConstants {
-        public static final int intakeMotor = 13;
-        public static final int armMotor = 14;
+        public static final int intakeMotor = 14;
+        // public static final int armMotor = 14;
         public static final int STATOR_CURRENT_LIMIT = 90;
         public static final int CURRENT_LIMIT = 60;//35
         public static final int CURRENT_THRESHOLD = 60;//60
@@ -466,11 +466,11 @@ public final class Constants {
 
         public static final int lmotorID = 22;
         public static final int rmotorID = 23;
-        public static final double kP = 0;
+        public static final double kP = 0.04;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final double wigglePeriod = 0;
-        public static final double wiggleAmplitude = 0;
+        public static final double wigglePeriod = 1;
+        public static final double wiggleAmplitude = 1;
 
     }
 
@@ -536,6 +536,8 @@ public final class Constants {
         
         public static final double gearingMultiplier = 1;
         public static final int indexMotorFeeder = 20;
+        public static final int indexMotorFeeder2 = 13;
+
         public static final int indexMotorTurret1 = 21;
         // public static final int indexMotorTurret2 = 22;
         public static final int STATOR_CURRENT_LIMIT = 70;//70
