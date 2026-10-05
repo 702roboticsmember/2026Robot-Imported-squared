@@ -9,6 +9,9 @@ import java.util.Optional;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.vision.camera.HttpCamera;
+import org.wpilib.vision.camera.MjpegServer;
+import org.wpilib.vision.stream.CameraServer;
 
 import com.limelightvision.Limelight;
 
@@ -29,7 +32,13 @@ public class LimelightSubsystem extends SubsystemBase {
   Limelight secondary = new Limelight(Constants.limelightConstants.limelightBack);
   /** Creates a new LimelightSubsystem. */
   public LimelightSubsystem() {
+    CameraServer.startAutomaticCapture();
     limelight.setIMUMode(IMUMode.INTERNAL_EXTERNAL_ASSIST);
+    HttpCamera turretFeed = new HttpCamera("turret", "http://limelight-duncan.local:5800/stream.mjpg");
+    HttpCamera backFeed = new HttpCamera("back", "http://limelight-mega.local:5800/stream.mjpg");
+
+    CameraServer.addCamera(turretFeed);
+    CameraServer.addCamera(backFeed);
   }
 
   public LimelightResults getResults() {

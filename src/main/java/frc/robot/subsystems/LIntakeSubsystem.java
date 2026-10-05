@@ -26,6 +26,7 @@ public class LIntakeSubsystem extends SubsystemBase {
   public LIntakeSubsystem() {
     Lmotor.configNeutralMode(NeutralModeValue.Brake);
     Rmotor.configNeutralMode(NeutralModeValue.Brake);
+    resetPos();
   }
 
   public void setLSpeed(double speed) {
@@ -46,12 +47,18 @@ public class LIntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     Telemetry.log("Lintake L Pos", getLTicks());
+    Telemetry.log("Lintake R Pos", getRTicks());
     // This method will be called once per scheduler run
   }
 
   public void setBoth(double speed) {
     setLSpeed(speed);
     setRSpeed(speed);
+  }
+
+  public void resetPos() {
+    Lmotor.setPosition(0);
+    Rmotor.setPosition(0);
   }
 
   public Command LIntkakeTest(DoubleSupplier axis) {

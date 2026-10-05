@@ -210,7 +210,7 @@ public final class Constants {
     public static final class Swerve {
         public static Pose2d Robotpose = new Pose2d();
         public static ChassisVelocities speeds = new ChassisVelocities();
-        
+        public static final Pose2d HubStart = new Pose2d(3.418, 4.041, Rotation2d.PI);
         public static final boolean INVERT_GYRO = false;
          public static final double DRIVE_GEAR_RATIO = 5.36; //L1: 7.13 - L2 5.9 - L3 5.36
         public static final double ANGLE_GEAR_RATIO = 18.75;
@@ -433,7 +433,7 @@ public final class Constants {
         public static final int angleMotor = 0;
         public static double angle = 0;
         
-        public static double allowedShootingTolerance = 8;
+        public static double allowedShootingTolerance = 360; //8
 
     }
 
@@ -467,7 +467,7 @@ public final class Constants {
         public static final int lmotorID = 22;
         public static final int rmotorID = 23;
         public static final double kP = 0.04;
-        public static final double kI = 0;
+        public static final double kI = 0.005;
         public static final double kD = 0;
         public static final double wigglePeriod = 1;
         public static final double wiggleAmplitude = 1;

@@ -20,6 +20,7 @@ import com.limelightvision.PoseEstimate;
 // import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 
 import org.wpilib.math.linalg.VecBuilder;
+import org.wpilib.smartdashboard.Field2d;
 import org.wpilib.math.estimator.PoseEstimator;
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
 import org.wpilib.math.geometry.Pose2d;
@@ -205,7 +206,8 @@ public class Swerve extends SubsystemBase {
     }
 
     public Rotation2d getHeading() {
-        return getPose().getRotation();
+        // return getPose().getRotation();
+        return Rotation2d.fromDegrees(gyro.getYaw().getValueAsDouble());
     }
 
     public void setHeading(Rotation2d heading) {
@@ -372,6 +374,7 @@ public void addmt1VisionMeasurement(PoseEstimate mt1){
         swervePoseEstimator.updateWithTime(Timer.getMonotonicTimestamp(), getGyroYaw(), getModulePositions());
        
         Telemetry.log("Pose", swervePoseEstimator.getEstimatedPosition());
+        
 
 
         Telemetry.log("gyro", getHeading().getDegrees() );

@@ -67,7 +67,7 @@ public class IndexerSubsystem extends SubsystemBase {
     // //apply
     // talonFXConfigurator.apply(config);
     // talonFXConfiguratorSecondary.apply(configSecondary);
-    indexMotorPrimary.getConfigurator().apply(config);
+    // indexMotorPrimary.getConfigurator().apply(config);
     // indexMotorSecondary.getConfigurator().apply(config);
   }
 

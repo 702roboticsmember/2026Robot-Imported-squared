@@ -25,6 +25,7 @@ public class LintakePIDCommand extends Command {
     addRequirements(sub);
     this.wiggle = wiggle;
     this.setpoint = setpoint;
+    
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -38,6 +39,8 @@ public class LintakePIDCommand extends Command {
       lPidController.setSetpoint(setpoint);
       rPidController.setSetpoint(-setpoint);
     }
+    lPidController.setTolerance(0.1);
+    rPidController.setTolerance(0.1);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -52,7 +55,8 @@ public class LintakePIDCommand extends Command {
     double rspeed = rPidController.calculate(lIntakeSubsystem.getRTicks());
     lIntakeSubsystem.setLSpeed(lspeed);
     lIntakeSubsystem.setRSpeed(rspeed);
-    Telemetry.log("Lintake Speed", lspeed);
+    Telemetry.log("L Lintake Speed", lspeed);
+    Telemetry.log("R Lintake Speed", rspeed);
   }
 
   // Called once the command ends or is interrupted.
