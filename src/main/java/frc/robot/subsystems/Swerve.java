@@ -386,21 +386,21 @@ public void addmt1VisionMeasurement(PoseEstimate mt1){
             Telemetry.log("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
             Telemetry.log("Mod " + mod.moduleNumber + " Velocity", mod.getState().velocity);
         }
-
-        if (limelightMeasurementTurret != null){
-            if(limelightMeasurementTurret.pose != null && limelightMeasurementTurret.pose.getRotation() != null){
-              Pose2d pose = limelightTurretPoseAdjustedToRobot(limelightMeasurementTurret.pose);
+        
+        if (limelightMeasurementTurret != null && RobotContainer.limelightEnabled){
+                if(limelightMeasurementTurret.pose != null && limelightMeasurementTurret.pose.getRotation() != null){
+                Pose2d pose = limelightTurretPoseAdjustedToRobot(limelightMeasurementTurret.pose);
               
-              limelightMeasurementTurret.pose = pose;
-             addmt1VisionMeasurement(limelightMeasurementTurret); 
-              
+                limelightMeasurementTurret.pose = pose;
+                    addmt1VisionMeasurement(limelightMeasurementTurret); 
+                
             }
-           }
+            }
            ChassisVelocities speed = getRobotRelativeSpeeds();
            Constants.Swerve.speeds = speed;
         Telemetry.log("chassisx", speed.vx);
         Telemetry.log("chassisy", speed.vy);
-        if (limelightMeasurement != null){   
+        if (limelightMeasurement != null && RobotContainer.limelightEnabled){   
             addmt1VisionMeasurement(limelightMeasurement); 
         }
     // Constants.Swerve.Robotpose = swervePoseEstimator.getEstimatedPosition();

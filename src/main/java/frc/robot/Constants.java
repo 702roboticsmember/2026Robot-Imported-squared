@@ -562,6 +562,7 @@ public final class Constants {
         public static final boolean FLOOR_ENABLE_STATOR_CURRENT_LIMIT = true;
         public static final boolean FLOOR_ENABLE_CURRENT_LIMIT = true;
         public static final double FloorSpeed = 0.3;
+        public static final int ROLLER_MOTOR_ID = 57;
     }
 
     public static final class HoodConstants {

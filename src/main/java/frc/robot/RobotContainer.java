@@ -57,6 +57,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.LIntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.TurretSubsystem;
@@ -85,13 +86,14 @@ public class RobotContainer {
     private final XboxController driver = new XboxController(0);
     private final XboxController codriver = new XboxController(1);
     private final LIntakeSubsystem lIntakeSubsystem = new LIntakeSubsystem();
+    private final RollerSubsystem rollerSubsystem = new RollerSubsystem();
 
 
 
 
     //Driver Buttons
-    private final JoystickButton lintakein = new JoystickButton(driver, Gamepad.Button.FACE_RIGHT.value);
-    private final JoystickButton lintakePartial = new JoystickButton(driver, Gamepad.Button.FACE_DOWN.value);
+    private final JoystickButton lintakein = new JoystickButton(driver, Gamepad.Button.FACE_DOWN.value);
+    private final JoystickButton lintakePartial = new JoystickButton(driver, Gamepad.Button.FACE_RIGHT.value);
     private final JoystickButton lintakeWiggle = new JoystickButton(driver, Gamepad.Button.LEFT_BUMPER.value);
     private final JoystickButton intakeOut = new JoystickButton(driver, Gamepad.Button.FACE_LEFT.value);
     // private final JoystickButton intakeIn = new JoystickButton(driver, Gamepad.Button.LEFT_BUMPER.value);
@@ -104,11 +106,13 @@ public class RobotContainer {
     private final JoystickButton autoAimPASS = new JoystickButton(driver, Gamepad.Button.BACK.value);
     private final JoystickButton HubReset = new JoystickButton(codriver, Gamepad.Button.LEFT_BUMPER.value);
     private final JoystickButton ToggleLimelight = new JoystickButton(codriver, Gamepad.Button.FACE_DOWN.value);
+    //Toggle a boolean with if limelight is off or on
 
-    private final POVButton TL = new POVButton(codriver, POVDirection.UP_LEFT);
-    private final POVButton TR = new POVButton(codriver, POVDirection.UP_RIGHT);
-    private final POVButton BL = new POVButton(codriver, POVDirection.DOWN_LEFT);
-    private final POVButton BR = new POVButton(codriver, POVDirection.DOWN_RIGHT);
+    private final POVButton TL = new POVButton(codriver, POVDirection.UP_LEFT);//3.632 y.517 Heading=180
+    private final POVButton TR = new POVButton(codriver, POVDirection.UP_RIGHT);//3.632 y=7.553 Heading=180
+    private final POVButton BL = new POVButton(codriver, POVDirection.DOWN_LEFT);//x=0.358  Heading=0
+    private final POVButton BR = new POVButton(codriver, POVDirection.DOWN_RIGHT);//x=0.358 y=.517 Heading=0
+    //reset odometry to corners
 
     private final POVButton UP = new POVButton(driver, POVDirection.UP);
     private final POVButton DOWN = new POVButton(driver, POVDirection.DOWN);
@@ -122,6 +126,7 @@ public class RobotContainer {
     
    
     //Variables
+    public static boolean limelightEnabled = true;
     public static boolean BLUE_ALLIANCE = false;
     public static double power = 1;
     public static double max = 1;
@@ -224,8 +229,10 @@ public class RobotContainer {
 
                 if (true) {
                     f_FloorIndexerSubsystem.setVelocity(60);
+                    // rollerSubsystem.setSpeed(-0.5);
                 } else {
                     f_FloorIndexerSubsystem.setVelocity(20);
+                    // rollerSubsystem.setSpeed(0);
                 }
                 
                 
@@ -461,6 +468,7 @@ public class RobotContainer {
         autoAimPASS.whileTrue(PASS());
         autoAimPASS.onFalse(HoodDown());
         HubReset.onTrue(SetRobotPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO)));
+        ToggleLimelight.onTrue(new InstantCommand(() -> limelightEnabled = !limelightEnabled));
         // armin.onTrue(ArmIn());
         // armPartial.whileTrue(ArmPartial());
         // armPartial.onFalse(ArmOut());
@@ -479,6 +487,13 @@ public class RobotContainer {
         // armOut.onTrue(ArmOut());
         resetGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
+        //odometry keystone
+
+        TL.onTrue(SetRobotPose(new Pose2d(3.632, .517, Rotation2d.PI)));
+        TR.onTrue(SetRobotPose(new Pose2d(3.632, 7.553, Rotation2d.PI)));
+        BL.onTrue(SetRobotPose(new Pose2d(0.358, .517, Rotation2d.ZERO)));
+        BR.onTrue(SetRobotPose(new Pose2d(0.358, 7.553, Rotation2d.ZERO)));
+    
         // COSTART.whileTrue((new TeleopSwerve(s_Swerve, 
         // ()-> -driver.getRawAxis(1) * power, 
         // ()-> -driver.getRawAxis(0) * power,
@@ -533,6 +548,7 @@ public class RobotContainer {
             new InstantCommand(() -> s_Swerve.setPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO))),
             new LintakePIDCommand(lIntakeSubsystem, false, -7)
            );
+        // return new InstantCommand(() -> rollerSubsystem.setSpeed(-0.5));
           }
     }
      
