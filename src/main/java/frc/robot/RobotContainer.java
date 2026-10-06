@@ -194,7 +194,7 @@ public class RobotContainer {
         return new SequentialCommandGroup(
             Commands.run(()->{
                 if (Math.abs(CurrentAngle - TurretGoal) < Constants.TurretConstants.allowedShootingTolerance) {
-                        i_IndexerSubsystem.setSpeedPrimary(0.5);
+                        i_IndexerSubsystem.setSpeedPrimary(1);
                         f_FloorIndexerSubsystem.setVelocity(0);
                     }
                     else {
@@ -205,8 +205,8 @@ public class RobotContainer {
              new WaitCommand(0.1),
              Commands.run(()->{
                  if (true) {
-                        i_IndexerSubsystem.setSpeedPrimary(0.5);
-                        f_FloorIndexerSubsystem.setVelocity(60);
+                        i_IndexerSubsystem.setSpeedPrimary(1);
+                        f_FloorIndexerSubsystem.setVelocity(45);
                     }
                     else {
                         i_IndexerSubsystem.setSpeedPrimary(0);
@@ -218,7 +218,8 @@ public class RobotContainer {
                 //TODO figure out what tf this does
             Commands.run(()->{
                 if (true) {
-                        i_IndexerSubsystem.setSpeedPrimary(0.5);
+                        i_IndexerSubsystem.setSpeedPrimary(1);
+                        rollerSubsystem.setSpeed(-0.5);
                     }
                     else {
                         i_IndexerSubsystem.setSpeedPrimary(0);
@@ -228,10 +229,10 @@ public class RobotContainer {
                 }
 
                 if (true) {
-                    f_FloorIndexerSubsystem.setVelocity(60);
+                    f_FloorIndexerSubsystem.setVelocity(45);
                     // rollerSubsystem.setSpeed(-0.5);
                 } else {
-                    f_FloorIndexerSubsystem.setVelocity(20);
+                    f_FloorIndexerSubsystem.setVelocity(15);
                     // rollerSubsystem.setSpeed(0);
                 }
                 
@@ -256,6 +257,7 @@ public class RobotContainer {
         return new SequentialCommandGroup(new ParallelCommandGroup(
             
             new InstantCommand(()->i_IndexerSubsystem.setVelocity(-10), i_IndexerSubsystem),
+            new InstantCommand(() -> rollerSubsystem.setSpeed(-0.1)),
             new FloorOffset(f_FloorIndexerSubsystem, -20),
             new InstantCommand(() -> power = 1),
             new InstantCommand(() -> max = 1)
@@ -263,6 +265,7 @@ public class RobotContainer {
            ).withDeadline(new WaitCommand(0.1)), new WaitCommand(0.1), new ParallelCommandGroup(
             
             new InstantCommand(()->i_IndexerSubsystem.setVelocity(-0), i_IndexerSubsystem),
+            new InstantCommand(() -> rollerSubsystem.setSpeed(0)),
             new InstantCommand(() -> power = 1),
             new InstantCommand(() -> max = 1)
 
@@ -485,7 +488,7 @@ public class RobotContainer {
         RIGHT.onTrue(wrapLocationChange(()-> nextLocation()));
         LEFT.onTrue(wrapLocationChange(()-> prevLocation()));
         // armOut.onTrue(ArmOut());
-        resetGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        resetGyro.onTrue(new InstantCommand(() -> s_Swerve.resetGyro()));
 
         //odometry keystone
 

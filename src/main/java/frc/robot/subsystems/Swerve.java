@@ -20,6 +20,9 @@ import com.limelightvision.PoseEstimate;
 // import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 
 import org.wpilib.math.linalg.VecBuilder;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructArrayPublisher;
+import org.wpilib.networktables.StructPublisher;
 import org.wpilib.smartdashboard.Field2d;
 import org.wpilib.math.estimator.PoseEstimator;
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
@@ -222,6 +225,9 @@ public class Swerve extends SubsystemBase {
         swervePoseEstimator.resetPosition(getGyroYaw(), getModulePositions(),
                 new Pose2d(getPose().getTranslation(), new Rotation2d()));
     }
+    public void resetGyro() {
+        gyro.reset();
+    }
 
     public Rotation2d getGyroYaw() {
        
@@ -360,6 +366,10 @@ public void addmt1VisionMeasurement(PoseEstimate mt1){
     }
 
 
+    StructArrayPublisher<SwerveModuleVelocity> Swervepublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveStates", SwerveModuleVelocity.struct).publish();
+    StructPublisher<Rotation2d> gyroPublisher = NetworkTableInstance.getDefault().getStructTopic("Gyro", Rotation2d.struct).publish();
+    StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();
+    StructPublisher<ChassisVelocities> chassisSpeedsPublisher = NetworkTableInstance.getDefault().getStructTopic("ChassisSpeeds", ChassisVelocities.struct).publish();
 
     @Override
     public void periodic() {
@@ -373,12 +383,21 @@ public void addmt1VisionMeasurement(PoseEstimate mt1){
         //if(gyro.isConnected())swervePoseEstimator.updateWithTime(Timer.getTimestamp(), getGyroYaw(), getModulePositions());
         swervePoseEstimator.updateWithTime(Timer.getMonotonicTimestamp(), getGyroYaw(), getModulePositions());
        
-        Telemetry.log("Pose", swervePoseEstimator.getEstimatedPosition());
-        
+        // Telemetry.log("Pose", swervePoseEstimator.getEstimatedPosition());
+        SwerveModuleVelocity[] states = {
+            swerveModules[0].getState(),
+            swerveModules[1].getState(),
+            swerveModules[2].getState(),
+            swerveModules[3].getState()
+        };
+        Swervepublisher.set(states);
+        gyroPublisher.set(getHeading());
+        posePublisher.set(getPose());
+        chassisSpeedsPublisher.set(getRobotRelativeSpeeds());
 
 
-        Telemetry.log("gyro", getHeading().getDegrees() );
-        
+        // Telemetry.log("gyro", getHeading().getDegrees() );
+
         
         //Telemetry.log("Acc",this.getAcc());
         for (SwerveModule mod : swerveModules) {

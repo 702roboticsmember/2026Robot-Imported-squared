@@ -48,7 +48,7 @@ public class LintakePIDCommand extends Command {
   public void execute() {
     if(wiggle) {
       lPidController.setSetpoint(setpoint + (Math.sin(timer.get() * Constants.LintakeConstants.wigglePeriod) * Constants.LintakeConstants.wiggleAmplitude));
-      rPidController.setSetpoint(setpoint - (Math.sin(timer.get() * Constants.LintakeConstants.wigglePeriod) * Constants.LintakeConstants.wiggleAmplitude));
+      rPidController.setSetpoint(-setpoint - (Math.sin(timer.get() * Constants.LintakeConstants.wigglePeriod) * Constants.LintakeConstants.wiggleAmplitude));
     }
 
     double lspeed = lPidController.calculate(lIntakeSubsystem.getLTicks());

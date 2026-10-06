@@ -84,13 +84,13 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public PoseEstimate getPoseEstimateMt1() {
     Alliance alliance = MatchState.getAlliance().get();
-    PoseEstimateType poseEstimateType = (alliance == Alliance.RED) ? PoseEstimateType.MT1_WPIRED : PoseEstimateType.MT1_WPIBLUE;
+    PoseEstimateType poseEstimateType = !(alliance == Alliance.RED) ? PoseEstimateType.MT1_WPIRED : PoseEstimateType.MT1_WPIBLUE;
     return limelight.getPoseEstimate(poseEstimateType);
   }
 
   public PoseEstimate getBackPose() {
     Alliance alliance = MatchState.getAlliance().get();
-    PoseEstimateType poseEstimateType = (alliance == Alliance.RED) ? PoseEstimateType.MT1_WPIRED : PoseEstimateType.MT1_WPIBLUE;
+    PoseEstimateType poseEstimateType = !(alliance == Alliance.RED) ? PoseEstimateType.MT1_WPIRED : PoseEstimateType.MT1_WPIBLUE;
     return secondary.getPoseEstimate(poseEstimateType);
   }
 
