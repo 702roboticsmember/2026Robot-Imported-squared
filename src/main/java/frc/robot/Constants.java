@@ -50,6 +50,7 @@ public final class Constants {
     public static final CANBus CAN_BUS = new CANBus(CANPort.CAN_S0);
     public static final CANBus TURRET_CAN = new CANBus(CANPort.CAN_S1);
     public static final double CONTROLLER_DEADBAND = 0.05;//0.05
+    public static Alliance alliance = MatchState.getAlliance().get();
 
     public static final class LEDConstants {
 
@@ -298,16 +299,16 @@ public final class Constants {
         public static final boolean isOpenLoop = false;//true
 
         public static final double OPEN_LOOP_RAMP = 0.25;//.25
-        public static final double CLOSED_LOOP_RAMP = 0.4;//.25
+        public static final double CLOSED_LOOP_RAMP = 0.25;//.25
 
         public static final PIDConstants ANGLE_PID = new PIDConstants(FALCON_500_CONSTANTS.angleKP,
                 FALCON_500_CONSTANTS.angleKI, FALCON_500_CONSTANTS.angleKD);
         public static final PIDConstants DRIVE_PID = new PIDConstants(0.12, 0, 0.0);
 
         /* Drive Motor Characterization Values From SYSID */
-        public static final double DRIVE_KS = 0.22;//.32
-        public static final double DRIVE_KV = 1.8;//1.51
-        public static final double DRIVE_KA = 0.18;//.27
+        public static final double DRIVE_KS = 0.32;//.22
+        public static final double DRIVE_KV = 1.51;//1.8
+        public static final double DRIVE_KA = 0.27;//.18
 
         /** Units: m/s */
         public static final double MAX_SPEED = 12;
@@ -469,8 +470,8 @@ public final class Constants {
         public static final double kP = 0.04;
         public static final double kI = 0.005;
         public static final double kD = 0;
-        public static final double wigglePeriod = 1;
-        public static final double wiggleAmplitude = 1;
+        public static final double wigglePeriod = 8;
+        public static final double wiggleAmplitude = 1.75;
 
     }
 

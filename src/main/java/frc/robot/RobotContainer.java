@@ -106,7 +106,7 @@ public class RobotContainer {
     private final JoystickButton autoAimPASS = new JoystickButton(driver, Gamepad.Button.BACK.value);
     private final JoystickButton HubReset = new JoystickButton(codriver, Gamepad.Button.LEFT_BUMPER.value);
     private final JoystickButton ToggleLimelight = new JoystickButton(codriver, Gamepad.Button.FACE_DOWN.value);
-    //Toggle a boolean with if limelight is off or on
+    //Toggle a boolean wit2 if limelight is off or on
 
     private final POVButton TL = new POVButton(codriver, POVDirection.UP_LEFT);//3.632 y.517 Heading=180
     private final POVButton TR = new POVButton(codriver, POVDirection.UP_RIGHT);//3.632 y=7.553 Heading=180
@@ -154,7 +154,7 @@ public class RobotContainer {
 
     public static Alliance getAlliance(){
         BLUE_ALLIANCE = true;
-        return MatchState.getAlliance().get();
+        return Constants.alliance;
     }
 
 
@@ -219,7 +219,7 @@ public class RobotContainer {
             Commands.run(()->{
                 if (true) {
                         i_IndexerSubsystem.setSpeedPrimary(1);
-                        rollerSubsystem.setSpeed(-0.5);
+                        rollerSubsystem.setSpeed(0.5);
                     }
                     else {
                         i_IndexerSubsystem.setSpeedPrimary(0);
@@ -415,6 +415,8 @@ public class RobotContainer {
         ()->false, ()-> getAlliance() == Alliance.BLUE));
         lIntakeSubsystem.setDefaultCommand(lIntakeSubsystem.LIntkakeTest(() -> driver.getRightY()));
 
+        addAutos();
+
         // s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> Math.clamp(-driver.getLeftY(), -max, max), null, null, UP, ClimbTrigger));
 
         // s_ShooterSubsystem.setDefaultCommand(new InstantCommand(()-> s_ShooterSubsystem.setSpeed(codriver.getLeftTriggerAxis()* 0.4) , s_ShooterSubsystem));
@@ -465,10 +467,10 @@ public class RobotContainer {
        
         intakeOut.whileTrue(IntakeOut()); 
         intakeOut.onFalse(IntakeStop()); 
-        intakeIn.whileTrue(i_IntakeSubsystem.spin(() ->-0.4));//new ParallelCommandGroup(new IntakeArmPID(0, i_IntakeArmSubsystem), new InstantCommand(() -> i_IntakeSubsystem.setIntakeSpeed(0))));  
-        autoAimHUB.whileTrue(AimAtHub());
+        intakeIn.whileTrue(i_IntakeSubsystem.spin(() ->-0.85));//new ParallelCommandGroup(new IntakeArmPID(0, i_IntakeArmSubsystem), new InstantCommand(() -> i_IntakeSubsystem.setIntakeSpeed(0))));  
+        autoAimHUB.whileTrue(AimAtHubBlue());
         autoAimHUB.onFalse(HoodDown());
-        autoAimPASS.whileTrue(PASS());
+        autoAimPASS.whileTrue(AimAtHubRed());
         autoAimPASS.onFalse(HoodDown());
         HubReset.onTrue(SetRobotPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO)));
         ToggleLimelight.onTrue(new InstantCommand(() -> limelightEnabled = !limelightEnabled));
@@ -477,7 +479,7 @@ public class RobotContainer {
         // armPartial.onFalse(ArmOut());
         lintakein.whileTrue(new LintakePIDCommand(lIntakeSubsystem, false, 0));
         lintakePartial.whileTrue(new LintakePIDCommand(lIntakeSubsystem, false, -7));
-        lintakeWiggle.whileTrue(new LintakePIDCommand(lIntakeSubsystem, true, -1));
+        lintakeWiggle.whileTrue(new LintakePIDCommand(lIntakeSubsystem, true, -7+Constants.LintakeConstants.wiggleAmplitude/2));
       
         shoot.whileTrue(Shoot());
   
@@ -547,12 +549,25 @@ public class RobotContainer {
         // return new ParallelCommandGroup(
         //     //new InstantCommand(()->Swerve.gyro.reset()),
         //     autoChooser.getSelected()).andThen(new ParallelCommandGroup(ShootOff(), ArmOut(), IntakeOff()).withDeadline(new WaitCommand(1)));
-           return new SequentialCommandGroup(
-            new InstantCommand(() -> s_Swerve.setPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO))),
-            new LintakePIDCommand(lIntakeSubsystem, false, -7)
-           );
-        // return new InstantCommand(() -> rollerSubsystem.setSpeed(-0.5));
+        //   return Autos.leftIntake(t_TurretSubsystem, s_Swerve, lIntakeSubsystem, i_IntakeSubsystem);
+          //Bare Minimum Auto
+        //    return new SequentialCommandGroup(
+        //     SetRobotPose(new Pose2d(3.632, .517, Rotation2d.PI)),
+        //     // new InstantCommand(() -> s_Swerve.setPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO))),
+        //     new LintakePIDCommand(lIntakeSubsystem, false, -7).withDeadline(new WaitCommand(2)),
+        //     new ParallelCommandGroup(
+        //         AimAtHub(),
+        //     new SequentialCommandGroup(new WaitCommand(1), Shoot())));
+           
+        return new LintakePIDCommand(lIntakeSubsystem, false, -7);
+           //
+           
           }
+    public void addAutos() {
+        autoChooser.addDefault("Simple", Autos.simpleAuto(s_Swerve, lIntakeSubsystem));
+        Telemetry.log("autoChooser", autoChooser);
+    }
+          Selectable<Command> autoChooser = new Selectable<Command>();
     }
      
 

@@ -39,8 +39,8 @@ public class LintakePIDCommand extends Command {
       lPidController.setSetpoint(setpoint);
       rPidController.setSetpoint(-setpoint);
     }
-    lPidController.setTolerance(0.1);
-    rPidController.setTolerance(0.1);
+    lPidController.setTolerance(0.01);
+    rPidController.setTolerance(0.01);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -68,6 +68,6 @@ public class LintakePIDCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return lPidController.atSetpoint() && rPidController.atSetpoint();
+    return lPidController.atSetpoint() && rPidController.atSetpoint() && !wiggle;
   }
 }

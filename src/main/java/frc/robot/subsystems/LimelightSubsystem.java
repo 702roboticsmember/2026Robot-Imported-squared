@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.math.geometry.Pose2d;
@@ -18,6 +20,7 @@ import com.limelightvision.Limelight;
 import com.limelightvision.FiducialTarget;
 import com.limelightvision.IMUData;
 import com.limelightvision.IMUMode;
+import com.limelightvision.LEDMode;
 import com.limelightvision.LimelightResults;
 import com.limelightvision.PoseEstimate;
 import com.limelightvision.PoseEstimateType;
@@ -83,19 +86,19 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public PoseEstimate getPoseEstimateMt1() {
-    Alliance alliance = MatchState.getAlliance().get();
-    PoseEstimateType poseEstimateType = !(alliance == Alliance.RED) ? PoseEstimateType.MT1_WPIRED : PoseEstimateType.MT1_WPIBLUE;
+    Alliance alliance = Constants.alliance;
+    PoseEstimateType poseEstimateType = (alliance == Alliance.RED) ? PoseEstimateType.MT1_WPIRED : PoseEstimateType.MT1_WPIBLUE;
     return limelight.getPoseEstimate(poseEstimateType);
   }
 
   public PoseEstimate getBackPose() {
-    Alliance alliance = MatchState.getAlliance().get();
-    PoseEstimateType poseEstimateType = !(alliance == Alliance.RED) ? PoseEstimateType.MT1_WPIRED : PoseEstimateType.MT1_WPIBLUE;
+    Alliance alliance = Constants.alliance;
+    PoseEstimateType poseEstimateType = (alliance == Alliance.RED) ? PoseEstimateType.MT1_WPIRED : PoseEstimateType.MT1_WPIBLUE;
     return secondary.getPoseEstimate(poseEstimateType);
   }
 
   public PoseEstimate getPoseEstimateMt2() {
-    Alliance alliance = MatchState.getAlliance().get();
+    Alliance alliance = Constants.alliance;
     PoseEstimateType poseEstimateType = (alliance == Alliance.RED) ? PoseEstimateType.MT2_WPIRED : PoseEstimateType.MT2_WPIBLUE;
     return limelight.getPoseEstimate(poseEstimateType);
   }
@@ -105,8 +108,21 @@ public class LimelightSubsystem extends SubsystemBase {
     limelight.setRobotOrientation(YawDegrees, false);
   }
 
+  public void setLEDS(LEDMode mode) {
+    limelight.setLEDMode(mode);
+    secondary.setLEDMode(mode);
+  }
+
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+  Command rave() {
+    return Commands.runEnd(() -> {
+      setLEDS(LEDMode.FORCE_BLINK);
+    }, () -> setLEDS(LEDMode.PIPELINE_CONTROL), this);
+  }
+
 }

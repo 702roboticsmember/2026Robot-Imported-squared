@@ -57,8 +57,8 @@ public class LIntakeSubsystem extends SubsystemBase {
   }
 
   public void resetPos() {
-    Lmotor.setPosition(0);
-    Rmotor.setPosition(0);
+    Lmotor.setPosition(-0.1);
+    Rmotor.setPosition(-0.1);
   }
 
   public Command LIntkakeTest(DoubleSupplier axis) {
