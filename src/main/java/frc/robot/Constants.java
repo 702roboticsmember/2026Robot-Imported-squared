@@ -12,16 +12,16 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.sim.ChassisReference;
-// import com.pathplanner.lib.config.PIDConstants;
-// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 // import com.revrobotics.spark.SparkBase.PersistMode;
 // import com.revrobotics.spark.SparkBase.ResetMode;
 // import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
 import org.wpilib.math.geometry.Pose2d;
-//import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-//import com.pathplanner.lib.util.PIDConstants;
+// import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+// import com.pathplanner.lib.util.PIDConstants;
 // import com.pathplanner.lib.util.ReplanningConfig;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
@@ -36,7 +36,7 @@ import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.MatchType;
 import org.wpilib.driverstation.DriverStationErrors;
 import frc.lib.util.COTSTalonFXSwerveConstants;
-import frc.lib.util.PIDConstants;
+// import frc.lib.util.PIDConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 import static frc.lib.util.COTSTalonFXSwerveConstants.SDS.MK4i.*;
@@ -359,13 +359,13 @@ public final class Constants {
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
-        // public static final PPHolonomicDriveController PATHPLANNER_FOLLOWER_CONFIG = new PPHolonomicDriveController(
-        //         new PIDConstants(5, 0, 0), 
-        //         new PIDConstants(3, 0, 0)
-        //         // MAX_SPEED,
-        //         // DRIVEBASE_RADIUS,
-        //         // new ReplanningConfig()
-        //         );
+        public static final PPHolonomicDriveController PATHPLANNER_FOLLOWER_CONFIG = new PPHolonomicDriveController(
+                new PIDConstants(5, 0, 0), 
+                new PIDConstants(3, 0, 0)
+                // MAX_SPEED,
+                // DRIVEBASE_RADIUS,
+                // new ReplanningConfig()
+                );
         public static final int GyroId = 24;
 
       

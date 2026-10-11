@@ -7,9 +7,9 @@ package frc.robot;
 import java.util.function.BooleanSupplier;
 
 import com.limelightvision.Limelight;
-// import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.auto.NamedCommands;
-// import com.pathplanner.lib.util.PathPlannerLogging;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.geometry.Pose2d;
@@ -389,15 +389,15 @@ public class RobotContainer {
         
         Field2d field = new Field2d();
         Telemetry.log("Field", field);
-        // PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
-        //     field.setRobotPose(pose);
-        // });
-        // PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
-        //     field.getObject("target pose").setPose(pose);
-        // });
-        // PathPlannerLogging.setLogActivePathCallback((poses) -> {
-        //     field.getObject("path").setPoses(poses);
-        // });
+        PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
+            field.setRobotPose(pose);
+        });
+        PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+            field.getObject("target pose").setPose(pose);
+        });
+        PathPlannerLogging.setLogActivePathCallback((poses) -> {
+            field.getObject("path").setPoses(poses);
+        });
 
         // t_TurretSubsystem.setDefaultCommand(new TurretRotateManualCommand(() -> driver.getRightX(), t_TurretSubsystem));
         // l_LEDSubsystem.setDefaultCommand(
@@ -428,25 +428,25 @@ public class RobotContainer {
 
        
     //     NamedCommands.registerCommand("Shoot", AutoShoot());
-    //     NamedCommands.registerCommand("ShootOff", ShootOff());
-    //     NamedCommands.registerCommand("AimAtHub", AimAtHub());
-    //     NamedCommands.registerCommand("AimAtHubBlue", AimAtHubBlue());
-    //     NamedCommands.registerCommand("AimAtHubRed", AimAtHubRed());
+        NamedCommands.registerCommand("ShootOff", ShootOff());
+        NamedCommands.registerCommand("AimAtHub", AimAtHub());
+        NamedCommands.registerCommand("AimAtHubBlue", AimAtHubBlue());
+        NamedCommands.registerCommand("AimAtHubRed", AimAtHubRed());
 
-    // // NamedCommands.registerCommand("AimAndShoot", AimAndShoot());
-    //     NamedCommands.registerCommand("IntakeNormal", IntakeIn());
-    //     NamedCommands.registerCommand("StopIntake", IntakeStop());
-    //     NamedCommands.registerCommand("IntakeOut", IntakeOut());
-    //     // NamedCommands.registerCommand("AutoIntake", AutoIntake());
-    //     NamedCommands.registerCommand("Climb", ClimbAuto());
-    //     NamedCommands.registerCommand("ClimbDeadline", ClimbDeadline());
-    //     NamedCommands.registerCommand("ClimbGrab", new InstantCommand());
-    //     NamedCommands.registerCommand("ClimbRetract", RetractClimb());
-    //     // NamedCommands.registerCommand("ShootDeadline", ShootDeadlineTime());
-    //     //ClimbGrab
-    //     NamedCommands.registerCommand("ArmOut", ArmOut());
-    //     NamedCommands.registerCommand("ArmPartial", ArmPartial());
-    //     NamedCommands.registerCommand("HoodDown", HoodDown());
+    // NamedCommands.registerCommand("AimAndShoot", AimAndShoot());
+        NamedCommands.registerCommand("IntakeNormal", i_IntakeSubsystem.spin(() -> -0.85));
+        NamedCommands.registerCommand("StopIntake", IntakeStop());
+        NamedCommands.registerCommand("IntakeOut", IntakeOut());
+        // NamedCommands.registerCommand("AutoIntake", AutoIntake());
+        // NamedCommands.registerCommand("Climb", ClimbAuto());
+        NamedCommands.registerCommand("ClimbDeadline", ClimbDeadline());
+        NamedCommands.registerCommand("ClimbGrab", new InstantCommand());
+        // NamedCommands.registerCommand("ClimbRetract", RetractClimb());
+        // NamedCommands.registerCommand("ShootDeadline", ShootDeadlineTime());
+        //ClimbGrab
+        // NamedCommands.registerCommand("ArmOut", ArmOut());
+        // NamedCommands.registerCommand("ArmPartial", ArmPartial());
+        NamedCommands.registerCommand("HoodDown", HoodDown());
 
       
 
@@ -454,10 +454,10 @@ public class RobotContainer {
         configureButtonBindings();
         //TODO ADD AUTO
         // Build an auto chooser. This will use Commands.none() as the default option.
-        // autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser = AutoBuilder.buildAutoChooser();
         teamChooser = new Selectable<>();
         
-        // SmartDashboard.putData("Auto Chooser", autoChooser);
+        Telemetry.log("Auto Chooser", autoChooser);
         Telemetry.log("Team Chooser", teamChooser);
         Telemetry.log("Input Distance", 0);
     }

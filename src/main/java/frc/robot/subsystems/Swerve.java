@@ -15,8 +15,8 @@ import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.limelightvision.PoseEstimate;
-// import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
 // import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 
 import org.wpilib.math.linalg.VecBuilder;
@@ -39,6 +39,7 @@ import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.system.Timer;
 import org.wpilib.telemetry.Telemetry;
+import org.json.simple.parser.ParseException;
 import org.wpilib.command2.SubsystemBase;
 
 /**
@@ -59,15 +60,19 @@ public class Swerve extends SubsystemBase {
     public Swerve(TurretSubsystem t_TurretSubsystem, LimelightSubsystem limelightSubsystem) {
         this.t_TurretSubsystem = t_TurretSubsystem;
         this.limelightSubsystem = limelightSubsystem;
-      
+        RobotConfig config = null;
         //limelightMeasurement =  LimelightHelpersCameronEdition.getBotPoseEstimate_wpiBlue(Constants.limelightConstants.limelightBack);
         gyro = new Pigeon2(Constants.Swerve.GyroId, Constants.CAN_BUS);
         gyro.reset();
-        // try {
-        //     config = RobotConfig.fromGUISettings();
-        // } catch (IOException | ParseException e) {
-        //     e.printStackTrace();
-        // }
+        try {
+            config = RobotConfig.fromGUISettings();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         swerveModules = new SwerveModule[] {
                 new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -83,31 +88,31 @@ public class Swerve extends SubsystemBase {
             swervePoseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.KINEMATICS, new Rotation2d(Math.toRadians(0)), getModulePositions(), new Pose2d());
         }
         
-        // AutoBuilder.configure(
-        //     this::getPose, // Robot pose supplier
-        //     this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
-        //     this::getRobotRelativeSpeeds, // ChassisVelocities supplier. MUST BE ROBOT RELATIVE
-        //     (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisVelocities. Also optionally outputs individual module feedforwards
-        //     Constants.Swerve.PATHPLANNER_FOLLOWER_CONFIG,
-        //     config,
-        //         () -> {
-        //             // Boolean supplier that controls when the path will be mirrored for the red alliance
-        //             // This will flip the path being followed to the red side of the field.
-        //             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        AutoBuilder.configure(
+            this::getPose, // Robot pose supplier
+            this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getRobotRelativeSpeeds, // ChassisVelocities supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisVelocities. Also optionally outputs individual module feedforwards
+            Constants.Swerve.PATHPLANNER_FOLLOWER_CONFIG,
+            config,
+                () -> {
+                    // Boolean supplier that controls when the path will be mirrored for the red alliance
+                    // This will flip the path being followed to the red side of the field.
+                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
                         
-        //             Optional<Alliance> alliance = MatchState.getAlliance();
-        //             if ((alliance).isPresent()) {
-        //                 if((alliance).get() == Alliance.RED){
-        //                     RobotContainer.BLUE_ALLIANCE = false;
-        //                     }else{
-        //                         RobotContainer.BLUE_ALLIANCE = true;
-        //                     }
-        //               return (alliance).get() == Alliance.RED;
-        //             }
-        //             return false;
-        //           },
-        //           this // Reference to this subsystem to set requirements
-        //   );
+                    Optional<Alliance> alliance = MatchState.getAlliance();
+                    if ((alliance).isPresent()) {
+                        if((alliance).get() == Alliance.RED){
+                            RobotContainer.BLUE_ALLIANCE = false;
+                            }else{
+                                RobotContainer.BLUE_ALLIANCE = true;
+                            }
+                      return (alliance).get() == Alliance.RED;
+                    }
+                    return false;
+                  },
+                  this // Reference to this subsystem to set requirements
+          );
     }
 
     private void driveRobotRelative(ChassisVelocities speeds) {
