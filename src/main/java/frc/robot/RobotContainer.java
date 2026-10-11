@@ -106,6 +106,9 @@ public class RobotContainer {
     private final JoystickButton autoAimPASS = new JoystickButton(driver, Gamepad.Button.BACK.value);
     private final JoystickButton HubReset = new JoystickButton(codriver, Gamepad.Button.LEFT_BUMPER.value);
     private final JoystickButton ToggleLimelight = new JoystickButton(codriver, Gamepad.Button.FACE_DOWN.value);
+    private final JoystickButton BlueHub = new JoystickButton(codriver, Gamepad.Button.FACE_RIGHT.value);
+    private final JoystickButton RedHub = new JoystickButton(codriver, Gamepad.Button.FACE_LEFT.value);
+
     //Toggle a boolean wit2 if limelight is off or on
 
     private final POVButton TL = new POVButton(codriver, POVDirection.UP_LEFT);//3.632 y.517 Heading=180
@@ -297,7 +300,7 @@ public class RobotContainer {
 
     private Command AutoAim() {
         Telemetry.log("autorun", true);
-        return new AutoAimCommand(t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, false, ()-> getAlliance() == Alliance.BLUE);
+        return new AutoAimCommand(t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, false, ()-> BLUE_ALLIANCE);
     }
 
     private Command Nest() {
@@ -312,7 +315,7 @@ public class RobotContainer {
 
     private Command AimAtHub(){
         
-            return new AutoAimCommand(true, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, ()-> getAlliance() == Alliance.BLUE);
+            return new AutoAimCommand(BLUE_ALLIANCE ? Constants.Locations.BLUEHUB.location : Constants.Locations.REDHUB.location, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, ()-> getAlliance() == Alliance.BLUE, limelightSubsystem);
         
         
             //return new AutoAimCommand(true, t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem);
@@ -339,7 +342,7 @@ public class RobotContainer {
 
     private Command PASS(){
       
-        return new AutoAimCommand(t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, true, ()-> getAlliance() == Alliance.BLUE);
+        return new AutoAimCommand(t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, true, ()-> BLUE_ALLIANCE);
     }
 
     private Command HoodDown(){
@@ -413,7 +416,7 @@ public class RobotContainer {
         ()-> Math.clamp(-driver.getLeftX() * power, -max, max),
         ()-> Math.clamp(-driver.getRightX() * power, -max, max), 
         ()->false, ()-> getAlliance() == Alliance.BLUE));
-        lIntakeSubsystem.setDefaultCommand(lIntakeSubsystem.LIntkakeTest(() -> driver.getRightY()));
+        // lIntakeSubsystem.setDefaultCommand(lIntakeSubsystem.LIntkakeTest(() -> driver.getRightY()));
 
         addAutos();
 
@@ -468,12 +471,14 @@ public class RobotContainer {
         intakeOut.whileTrue(IntakeOut()); 
         intakeOut.onFalse(IntakeStop()); 
         intakeIn.whileTrue(i_IntakeSubsystem.spin(() ->-0.85));//new ParallelCommandGroup(new IntakeArmPID(0, i_IntakeArmSubsystem), new InstantCommand(() -> i_IntakeSubsystem.setIntakeSpeed(0))));  
-        autoAimHUB.whileTrue(AimAtHubBlue());
+        autoAimHUB.whileTrue(AimAtHub());
         autoAimHUB.onFalse(HoodDown());
-        autoAimPASS.whileTrue(AimAtHubRed());
+        autoAimPASS.whileTrue(PASS());
         autoAimPASS.onFalse(HoodDown());
         HubReset.onTrue(SetRobotPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO)));
         ToggleLimelight.onTrue(new InstantCommand(() -> limelightEnabled = !limelightEnabled));
+        BlueHub.onTrue(new InstantCommand(() -> BLUE_ALLIANCE = true));
+        RedHub.onTrue(new InstantCommand(() -> BLUE_ALLIANCE = false));
         // armin.onTrue(ArmIn());
         // armPartial.whileTrue(ArmPartial());
         // armPartial.onFalse(ArmOut());
@@ -546,18 +551,26 @@ public class RobotContainer {
     
      public Command getAutonomousCommand() {
 
+
         // return new ParallelCommandGroup(
         //     //new InstantCommand(()->Swerve.gyro.reset()),
         //     autoChooser.getSelected()).andThen(new ParallelCommandGroup(ShootOff(), ArmOut(), IntakeOff()).withDeadline(new WaitCommand(1)));
         //   return Autos.leftIntake(t_TurretSubsystem, s_Swerve, lIntakeSubsystem, i_IntakeSubsystem);
           //Bare Minimum Auto
-        //    return new SequentialCommandGroup(
-        //     SetRobotPose(new Pose2d(3.632, .517, Rotation2d.PI)),
-        //     // new InstantCommand(() -> s_Swerve.setPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO))),
-        //     new LintakePIDCommand(lIntakeSubsystem, false, -7).withDeadline(new WaitCommand(2)),
-        //     new ParallelCommandGroup(
-        //         AimAtHub(),
-        //     new SequentialCommandGroup(new WaitCommand(1), Shoot())));
+    //        return new SequentialCommandGroup(
+    //         new InstantCommand(() -> limelightEnabled = false),
+    //         SetRobotPose(new Pose2d(3.632, 7.553, Rotation2d.ZERO)),
+    //         // new InstantCommand(() -> s_Swerve.setPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO))),
+    //         new LintakePIDCommand(lIntakeSubsystem, false, -7).withDeadline(new WaitCommand(2)),
+    //         new ParallelCommandGroup(
+    //             AimAtHub(),
+    //             i_IntakeSubsystem.spin(() -> -0.85),
+    //             new SequentialCommandGroup(
+    //                 new WaitCommand(1),
+    //                 Shoot())).withDeadline(new WaitCommand(10)),
+    //         ShootOff(),
+    //     HoodDown(),
+    // new InstantCommand(() -> limelightEnabled = true));
            
         return new LintakePIDCommand(lIntakeSubsystem, false, -7);
            //

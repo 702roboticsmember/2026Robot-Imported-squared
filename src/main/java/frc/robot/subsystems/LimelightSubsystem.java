@@ -105,7 +105,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
 
   public void SetRobotOrientation(double YawDegrees) {
-    limelight.setRobotOrientation(YawDegrees, false);
+    limelight.setRobotOrientation(YawDegrees, true);
   }
 
   public void setLEDS(LEDMode mode) {
