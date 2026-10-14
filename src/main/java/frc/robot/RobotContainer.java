@@ -26,7 +26,11 @@ import org.wpilib.driverstation.Gamepad;
 import org.wpilib.driverstation.POVDirection;
 import org.wpilib.system.Timer;
 import org.wpilib.telemetry.Telemetry;
+import org.wpilib.telemetry.TelemetryTable;
 import org.wpilib.tunable.Selectable;
+import org.wpilib.tunable.Tunable;
+import org.wpilib.tunable.TunableRegistry;
+import org.wpilib.tunable.TunableTable;
 import org.wpilib.units.measure.Time;
 import org.wpilib.smartdashboard.Field2d;
 //import org.wpilib.smartdashboard.SendableChooser;
@@ -137,7 +141,7 @@ public class RobotContainer {
     public static double CurrentAngle = 0;
     public BooleanSupplier hoodUp = ()-> true;
     public static boolean robotCentric = false;
-    // private final SendableChooser<Command> autoChooser;
+    private final Selectable<Command> autoChooser;
     private final Selectable<Command> teamChooser;
 
     public static Locations currentPOI = Locations.BLUEHUB;
@@ -418,7 +422,7 @@ public class RobotContainer {
         ()->false, ()-> getAlliance() == Alliance.BLUE));
         // lIntakeSubsystem.setDefaultCommand(lIntakeSubsystem.LIntkakeTest(() -> driver.getRightY()));
 
-        addAutos();
+        // addAutos();
 
         // s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> Math.clamp(-driver.getLeftY(), -max, max), null, null, UP, ClimbTrigger));
 
@@ -444,7 +448,7 @@ public class RobotContainer {
         // NamedCommands.registerCommand("ClimbRetract", RetractClimb());
         // NamedCommands.registerCommand("ShootDeadline", ShootDeadlineTime());
         //ClimbGrab
-        // NamedCommands.registerCommand("ArmOut", ArmOut());
+        NamedCommands.registerCommand("ArmOut", ArmOut());
         // NamedCommands.registerCommand("ArmPartial", ArmPartial());
         NamedCommands.registerCommand("HoodDown", HoodDown());
 
@@ -455,12 +459,17 @@ public class RobotContainer {
         //TODO ADD AUTO
         // Build an auto chooser. This will use Commands.none() as the default option.
         autoChooser = AutoBuilder.buildAutoChooser();
-        teamChooser = new Selectable<>();
         
-        Telemetry.log("Auto Chooser", autoChooser);
-        Telemetry.log("Team Chooser", teamChooser);
+        teamChooser = new Selectable<>();
+        TunableRegistry.publish("Auto Chooser", autoChooser);
+        TunableRegistry.publish("Team Chooser", teamChooser);
         Telemetry.log("Input Distance", 0);
     }
+    private Command ArmOut() {
+        return new LintakePIDCommand(lIntakeSubsystem, false, -7);
+    }
+
+
     Command SetRobotPose(Pose2d pose) {
         return new InstantCommand(() -> s_Swerve.setPosition(pose));
     }
@@ -554,33 +563,45 @@ public class RobotContainer {
 
         // return new ParallelCommandGroup(
         //     //new InstantCommand(()->Swerve.gyro.reset()),
-        //     autoChooser.getSelected()).andThen(new ParallelCommandGroup(ShootOff(), ArmOut(), IntakeOff()).withDeadline(new WaitCommand(1)));
+            // autoChooser.getSelected()).andThen(new ParallelCommandGroup(ShootOff(), IntakeOff()).withDeadline(new WaitCommand(1)));
         //   return Autos.leftIntake(t_TurretSubsystem, s_Swerve, lIntakeSubsystem, i_IntakeSubsystem);
           //Bare Minimum Auto
-    //        return new SequentialCommandGroup(
-    //         new InstantCommand(() -> limelightEnabled = false),
-    //         SetRobotPose(new Pose2d(3.632, 7.553, Rotation2d.ZERO)),
-    //         // new InstantCommand(() -> s_Swerve.setPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO))),
-    //         new LintakePIDCommand(lIntakeSubsystem, false, -7).withDeadline(new WaitCommand(2)),
-    //         new ParallelCommandGroup(
-    //             AimAtHub(),
-    //             i_IntakeSubsystem.spin(() -> -0.85),
-    //             new SequentialCommandGroup(
-    //                 new WaitCommand(1),
-    //                 Shoot())).withDeadline(new WaitCommand(10)),
-    //         ShootOff(),
-    //     HoodDown(),
-    // new InstantCommand(() -> limelightEnabled = true));
+           return new SequentialCommandGroup(
+            new InstantCommand(() -> limelightEnabled = false),
+            // SetRobotPose(new Pose2d(3.897, 7.418, Rotation2d.ZERO)),
+            SetRobotPose(new Pose2d(3.522, 3.770, Rotation2d.CCW_90DEG)),
+            // new InstantCommand(() -> s_Swerve.setGyroYaw(Rotation2d.CCW_90DEG.getDegrees())),
+            // new InstantCommand(() -> s_Swerve.setPose(new Pose2d(3.418, 4.041, Rotation2d.ZERO))),
+            new LintakePIDCommand(lIntakeSubsystem, false, -7).withDeadline(new WaitCommand(2)),
+            new ParallelCommandGroup(
+                new AutoAimCommand(BLUE_ALLIANCE ? Constants.Locations.BLUEHUB.location.minus(Constants.Locations.AUTOHUBOFFSET.location) : Constants.Locations.REDHUB.location.plus(Constants.Locations.AUTOHUBOFFSET.location), t_TurretSubsystem, h_HoodSubsystem, s_ShooterSubsystem, ()-> getAlliance() == Alliance.BLUE, limelightSubsystem),
+                i_IntakeSubsystem.spin(() -> -0.85),
+                new SequentialCommandGroup(
+                    new WaitCommand(1),
+                    Shoot())).withDeadline(new WaitCommand(15)),
+            ShootOff(),
+        HoodDown(),
+    new InstantCommand(() -> limelightEnabled = true)).finallyDo((interrupted) -> s_Swerve.setGyroYaw(Rotation2d.CW_90DEG.getDegrees())).handleInterrupt(() -> {
+        i_IndexerSubsystem.setVelocity(-0);
+        s_ShooterSubsystem.setSpeed(0);
+        f_FloorIndexerSubsystem.setFloorIndexSpeed(0);
+        rollerSubsystem.setSpeed(0);
+        h_HoodSubsystem.goToAngle(Constants.HoodConstants.forwardLimit);
+        limelightEnabled = true;
+    });
            
-        return new LintakePIDCommand(lIntakeSubsystem, false, -7);
+        // return new SequentialCommandGroup(
+        //     new InstantCommand(() ->s_Swerve.resetGyro()),
+        //     new LintakePIDCommand(lIntakeSubsystem, false, -7)
+        // );
            //
            
           }
-    public void addAutos() {
-        autoChooser.addDefault("Simple", Autos.simpleAuto(s_Swerve, lIntakeSubsystem));
-        Telemetry.log("autoChooser", autoChooser);
-    }
-          Selectable<Command> autoChooser = new Selectable<Command>();
+    // public void addAutos() {
+    //     autoChooser.addDefault("Simple", Autos.simpleAuto(s_Swerve, lIntakeSubsystem));
+    //     Telemetry.log("autoChooser", autoChooser);
+    // }
+    //       Selectable<Command> autoChooser = new Selectable<Command>();
     }
      
 

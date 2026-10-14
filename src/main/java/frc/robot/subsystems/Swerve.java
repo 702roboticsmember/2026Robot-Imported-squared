@@ -100,16 +100,17 @@ public class Swerve extends SubsystemBase {
                     // This will flip the path being followed to the red side of the field.
                     // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
                         
-                    Optional<Alliance> alliance = MatchState.getAlliance();
-                    if ((alliance).isPresent()) {
-                        if((alliance).get() == Alliance.RED){
-                            RobotContainer.BLUE_ALLIANCE = false;
-                            }else{
-                                RobotContainer.BLUE_ALLIANCE = true;
-                            }
-                      return (alliance).get() == Alliance.RED;
-                    }
-                    return false;
+                    // Optional<Alliance> alliance = MatchState.getAlliance();
+                    // if ((alliance).isPresent()) {
+                    //     if((alliance).get() == Alliance.RED){
+                    //         RobotContainer.BLUE_ALLIANCE = false;
+                    //         }else{
+                    //             RobotContainer.BLUE_ALLIANCE = true;
+                    //         }
+                    //   return (alliance).get() == Alliance.RED;
+                    // }
+                    // return false;
+                    return RobotContainer.BLUE_ALLIANCE;
                   },
                   this // Reference to this subsystem to set requirements
           );
@@ -231,7 +232,10 @@ public class Swerve extends SubsystemBase {
                 new Pose2d(getPose().getTranslation(), new Rotation2d()));
     }
     public void resetGyro() {
-        gyro.reset();
+        gyro.setYaw(180);
+    }
+    public void setGyroYaw(double Yaw) {
+        gyro.setYaw(Yaw);
     }
 
     public Rotation2d getGyroYaw() {
@@ -424,9 +428,9 @@ public void addmt1VisionMeasurement(PoseEstimate mt1){
            Constants.Swerve.speeds = speed;
         Telemetry.log("chassisx", speed.vx);
         Telemetry.log("chassisy", speed.vy);
-        if (limelightMeasurement != null && RobotContainer.limelightEnabled){   
-            addmt1VisionMeasurement(limelightMeasurement); 
-        }
+        // if (limelightMeasurement != null && RobotContainer.limelightEnabled){   
+        //     addmt1VisionMeasurement(limelightMeasurement); 
+        // }
     // Constants.Swerve.Robotpose = swervePoseEstimator.getEstimatedPosition();
     // Constants.TurretConstants.turretPose2d = RobotPoseAdjustedTolimelightTurret(swervePoseEstimator.getEstimatedPosition());
     

@@ -85,7 +85,8 @@ public final class Constants {
         REDRIGHT(flipTranslation2d(new Translation2d(1, 1.8)),  "Red Alliance right side"),//(2,1.8)
         CENTER(new Translation2d(8.270494, 4.034536), "Center"),
         BLUELT(new Translation2d(6, 7.4), "Blue Left Trench Entry"),
-        REDLT(flipTranslation2d(new Translation2d(6, 7.4)), "Red Left Trench Entry");
+        REDLT(flipTranslation2d(new Translation2d(6, 7.4)), "Red Left Trench Entry"),
+        AUTOHUBOFFSET(new Translation2d(0.5, 0), "Hub Offset");
 
         public final Translation2d location;
         public final String label;
